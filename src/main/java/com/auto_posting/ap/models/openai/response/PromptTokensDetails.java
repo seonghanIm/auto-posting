@@ -1,4 +1,4 @@
-package com.auto_posting.ap.service.models.openai.response;
+package com.auto_posting.ap.models.openai.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

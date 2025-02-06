@@ -1,8 +1,11 @@
 package com.auto_posting.ap.service.impl;
 
-import com.auto_posting.ap.service.models.openai.Messages;
-import com.auto_posting.ap.service.models.openai.request.OpenAIRequest;
-import com.auto_posting.ap.service.models.openai.response.OpenAIResponse;
+import com.auto_posting.ap.models.code.OPEN_AI_MODEL;
+import com.auto_posting.ap.models.openai.Messages;
+import com.auto_posting.ap.models.openai.request.OpenAIImageRequest;
+import com.auto_posting.ap.models.openai.request.OpenAIRequest;
+import com.auto_posting.ap.models.openai.response.OpenAIImageResponse;
+import com.auto_posting.ap.models.openai.response.OpenAIResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +15,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 @Service
@@ -26,17 +28,17 @@ public class OpenAIService {
 //    @Override
     @PostConstruct
     public String generateContent() {
-        fetchData();
+//        fetchImage();
         return "";
     }
 
 
 
-    public void fetchData(){
+    public void fetchData(OPEN_AI_MODEL model, String content){
         Messages messages = Messages.builder()
-                .role("system").content("안녕 반가워").build();
-        OpenAIRequest request = OpenAIRequest.builder().model("gpt-4o").messages(Collections.singletonList(messages)).build();
-        Mono<OpenAIResponse> res =  openAIWebClient.post().body(BodyInserters.fromValue(request)).retrieve().bodyToMono(OpenAIResponse.class);
+                .role("system").content(content).build();
+        OpenAIRequest request = OpenAIRequest.builder().model(model.getModel()).messages(Collections.singletonList(messages)).build();
+        Mono<OpenAIResponse> res =  openAIWebClient.post().uri("/chat/completions").body(BodyInserters.fromValue(request)).retrieve().bodyToMono(OpenAIResponse.class);
 
         res.subscribe(
                 result -> {
@@ -48,5 +50,20 @@ public class OpenAIService {
         );
     }
 
+    public void fetchImage(OPEN_AI_MODEL model,int count, String content, String size){
+        OpenAIImageRequest openAIImageRequest = OpenAIImageRequest.builder().model(model.getModel()).n(count).prompt(content).size(size).build();
+        Mono<OpenAIImageResponse> res = openAIWebClient.post().uri("/images/generations").body(BodyInserters.fromValue(openAIImageRequest)).retrieve().bodyToMono(OpenAIImageResponse.class);
+
+        res.subscribe(
+                result -> {
+                    log.info("success :: {}", result);
+                },
+                error -> {
+                    log.error("error :: {}", error.toString());
+                }
+        );
+    }
+
 
 }
+

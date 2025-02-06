@@ -1,4 +1,4 @@
-package com.auto_posting.ap.service.models.openai.response;
+package com.auto_posting.ap.models.openai.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

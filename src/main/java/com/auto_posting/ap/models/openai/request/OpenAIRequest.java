@@ -1,7 +1,7 @@
-package com.auto_posting.ap.service.models.openai.request;
+package com.auto_posting.ap.models.openai.request;
 
 
-import com.auto_posting.ap.service.models.openai.Messages;
+import com.auto_posting.ap.models.openai.Messages;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
